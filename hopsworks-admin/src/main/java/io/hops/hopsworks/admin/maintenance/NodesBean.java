@@ -42,7 +42,6 @@ import io.hops.hopsworks.common.agent.AgentLivenessMonitor;
 import io.hops.hopsworks.common.dao.host.Hosts;
 import io.hops.hopsworks.common.dao.host.HostsFacade;
 import io.hops.hopsworks.common.dao.python.CondaCommandFacade;
-import io.hops.hopsworks.common.dao.python.CondaCommands;
 import io.hops.hopsworks.common.hosts.HostsController;
 import io.hops.hopsworks.common.security.CertificatesMgmService;
 import io.hops.hopsworks.common.util.FormatUtils;
@@ -244,20 +243,6 @@ public class NodesBean implements Serializable {
 
   public void dialogAddNewNode() {
     RequestContext.getCurrentInstance().openDialog("addNewNodeDialog", dialogOptions, null);
-  }
-
-  public String condaStyle(String hostname) {
-    Optional<Hosts> optional = hostsFacade.findByHostname(hostname);
-    if (optional.isPresent()) {
-      Hosts h = optional.get();
-      List<CondaCommands> listCommands = condaCommandsFacade.findByHost(h);
-      for (CondaCommands cc : listCommands) {
-        if (cc.getStatus() == CondaCommandFacade.CondaStatus.FAILED) {
-          return "condaOutOfSync";
-        }
-      }
-    }
-    return "condaSync";
   }
 
   public void rsyncAnacondaLibs(String hostname) {

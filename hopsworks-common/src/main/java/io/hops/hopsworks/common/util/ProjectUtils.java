@@ -61,7 +61,7 @@ public class ProjectUtils {
     return false;
   }
   
-  public String getCurrentCondaEnvironment(Project project) {
+  public static String getCurrentCondaEnvironment(Project project) {
     String condaEnv = project.getName();
     
     if (project.getConda() && !project.getCondaEnv()) {
@@ -73,7 +73,15 @@ public class ProjectUtils {
     }
     return condaEnv;
   }
+  
+  public static String getDockerImageName(Project project){
+    return getDockerImageName(getCurrentCondaEnvironment(project));
+  }
 
+  public static String getDockerImageName(String envName){
+    return "local/" + envName;
+  }
+  
   public String getCurrentCondaBaseEnvironment(Project project) {
     if (project.getPythonVersion().compareToIgnoreCase("3.6") == 0) {
       return "python36";

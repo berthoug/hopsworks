@@ -54,6 +54,52 @@
             <version>15.0</version>
         </dependency>
         <dependency>
+  <groupId>io.hops</groupId>
+      <artifactId>hadoop-client-api</artifactId>
+      <version>${hops.version}</version>
+      <exclusions>
+                <exclusion>
+                    <groupId>com.nimbusds</groupId>
+                    <artifactId>nimbus-jose-jwt</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+</dependency>
+<!--<dependency>-->
+<!--<groupId>io.hops</groupId>
+      <artifactId>hadoop-client-runtime</artifactId>
+      <version>${hops.version}</version>
+      <exclusions>
+                <exclusion>
+                    <groupId>com.nimbusds</groupId>
+                    <artifactId>nimbus-jose-jwt</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.bouncycastle</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.servlet</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+</dependency>-->
+<!--        <dependency>
             <groupId>io.hops</groupId>
             <artifactId>hadoop-common</artifactId>
             <version>${hops.version}</version>
@@ -75,6 +121,6 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
-        </dependency>
+        </dependency>-->
     </dependencies>
 </project>

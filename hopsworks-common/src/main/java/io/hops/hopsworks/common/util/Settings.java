@@ -359,6 +359,10 @@ public class Settings implements Serializable {
   private static final String VARIABLE_ELASTIC_JWT_EXP_MS = "elastic_jwt_exp_ms";
   private static final String VARIABLE_KIBANA_MULTI_TENANCY_ENABLED = "kibana_multi_tenancy_enabled";
   
+  /*-----------------------Yarn Docker------------------------*/
+  private final static String VARIABLE_YARN_RUNTIME = "yarn_runtime";
+  private final static String VARIABLE_DOCKER_MOUNTS = "docker_mounts";
+  
   private String setVar(String varName, String defaultValue) {
     Variables userName = findById(varName);
     if (userName != null && userName.getValue() != null && (!userName.getValue().isEmpty())) {
@@ -681,8 +685,8 @@ public class Settings implements Serializable {
       PYPI_REST_ENDPOINT = setStrVar(VARIABLE_PYPI_REST_ENDPOINT, PYPI_REST_ENDPOINT);
       PROVIDED_PYTHON_LIBRARY_NAMES = toSetFromCsv(
           setStrVar(VARIABLE_PROVIDED_PYTHON_LIBRARY_NAMES, DEFAULT_PROVIDED_PYTHON_LIBRARY_NAMES), ",");
-      PREINSTALLED_PYTHON_LIBRARY_NAMES = toSetFromCsv(
-          setStrVar(VARIABLE_PREINSTALLED_PYTHON_LIBRARY_NAMES, DEFAULT_PREINSTALLED_PYTHON_LIBRARY_NAMES),
+      UNMUTABLE_PYTHON_LIBRARY_NAMES = toSetFromCsv(
+          setStrVar(VARIABLE_UNMUTABLE_PYTHON_LIBRARY_NAMES, DEFAULT_UNMUTABLE_PYTHON_LIBRARY_NAMES),
           ",");
 
       SERVING_MONITOR_INT = setStrVar(VARIABLE_SERVING_MONITOR_INT, SERVING_MONITOR_INT);
@@ -750,7 +754,9 @@ public class Settings implements Serializable {
         RESERVED_PROJECT_NAMES.add(tokenizer.nextToken());
       }
 
-
+      YARN_RUNTIME = setStrVar(VARIABLE_YARN_RUNTIME, YARN_RUNTIME);
+      DOCKER_MOUNTS = setStrVar(VARIABLE_DOCKER_MOUNTS, DOCKER_MOUNTS);
+      
       populateProvenanceCache();
       cached = true;
     }
@@ -901,8 +907,6 @@ public class Settings implements Serializable {
   public static final String SPARK_BLACKLIST_KILL_BLACKLISTED_EXECUTORS =
     "spark.blacklist.killBlacklistedExecutors";
   public static final String SPARK_TASK_MAX_FAILURES = "spark.task.maxFailures";
-  public static final String SPARK_YARN_APPMASTER_ENV = "spark.yarn.appMasterEnv.";
-  public static final String SPARK_EXECUTOR_ENV = "spark.executorEnv.";
 
   //PySpark properties
   public static final String SPARK_APP_NAME_ENV = "spark.app.name";
@@ -937,6 +941,33 @@ public class Settings implements Serializable {
   public static final String SPARK_PY_MAINCLASS
       = "org.apache.spark.deploy.PythonRunner";
 
+  public static final String SPARK_YARN_APPMASTER_ENV = "spark.yarn.appMasterEnv.";
+  public static final String SPARK_EXECUTOR_ENV = "spark.executorEnv.";
+
+  public static final String SPARK_YARN_APPMASTER_SPARK_USER = SPARK_YARN_APPMASTER_ENV + "SPARK_USER";
+  public static final String SPARK_YARN_APPMASTER_YARN_MODE = SPARK_YARN_APPMASTER_ENV + "SPARK_YARN_MODE";
+  public static final String SPARK_YARN_APPMASTER_YARN_STAGING_DIR = SPARK_YARN_APPMASTER_ENV 
+      + "SPARK_YARN_STAGING_DIR";
+  public static final String SPARK_YARN_APPMASTER_CUDA_DEVICES = SPARK_YARN_APPMASTER_ENV + "CUDA_VISIBLE_DEVICES";
+  public static final String SPARK_YARN_APPMASTER_HIP_DEVICES = SPARK_YARN_APPMASTER_ENV + "HIP_VISIBLE_DEVICES";
+  public static final String SPARK_YARN_APPMASTER_ENV_EXECUTOR_GPUS = SPARK_YARN_APPMASTER_ENV + "EXECUTOR_GPUS";
+  public static final String SPARK_YARN_APPMASTER_LIBHDFS_OPTS = SPARK_YARN_APPMASTER_ENV + "LIBHDFS_OPTS";
+
+  public static final String SPARK_EXECUTOR_SPARK_USER = SPARK_EXECUTOR_ENV + "SPARK_USER";
+  public static final String SPARK_EXECUTOR_ENV_EXECUTOR_GPUS = SPARK_EXECUTOR_ENV + "EXECUTOR_GPUS";
+  public static final String SPARK_EXECUTOR_LIBHDFS_OPTS = SPARK_EXECUTOR_ENV + "LIBHDFS_OPTS";
+
+  //docker
+  public static final String SPARK_YARN_APPMASTER_CONTAINER_RUNTIME = SPARK_YARN_APPMASTER_ENV
+      + "YARN_CONTAINER_RUNTIME_TYPE";
+  public static final String SPARK_YARN_APPMASTER_DOCKER_IMAGE = SPARK_YARN_APPMASTER_ENV
+      + "YARN_CONTAINER_RUNTIME_DOCKER_IMAGE";
+  public static final String SPARK_YARN_APPMASTER_DOCKER_MOUNTS = SPARK_YARN_APPMASTER_ENV
+      + "YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS";
+  public static final String SPARK_EXECUTOR_CONTAINER_RUNTIME = SPARK_EXECUTOR_ENV + "YARN_CONTAINER_RUNTIME_TYPE";
+  public static final String SPARK_EXECUTOR_DOCKER_IMAGE = SPARK_EXECUTOR_ENV + "YARN_CONTAINER_RUNTIME_DOCKER_IMAGE";
+  public static final String SPARK_EXECUTOR_DOCKER_MOUNTS = SPARK_EXECUTOR_ENV + "YARN_CONTAINER_RUNTIME_DOCKER_MOUNTS";
+  
   //Hive config
   public static final String HIVE_SITE = "hive-site.xml";
 
@@ -1777,7 +1808,7 @@ public class Settings implements Serializable {
    */
   public String getAnacondaProjectDir(Project project) {
     String condaEnv = projectUtils.getCurrentCondaEnvironment(project);
-    return getAnacondaDir() + File.separator + "envs" + File.separator + condaEnv;
+    return getAnacondaDir() + File.separator + "envs" + File.separator + "python36";
   }
   
   //TODO(Theofilos): Used by Flink. Will be removed as part of refactoring *YarnRunnerBuilders.
@@ -3177,7 +3208,8 @@ public class Settings implements Serializable {
   private Set<String> PROVIDED_PYTHON_LIBRARY_NAMES;
   private static final String VARIABLE_PROVIDED_PYTHON_LIBRARY_NAMES = "provided_python_lib_names";
   private static final String DEFAULT_PROVIDED_PYTHON_LIBRARY_NAMES =
-      "hops, pandas, numpy";
+      "hops, pandas, numpy, matplotlib, maggy, tqdm, Flask, scikit-learn, avro, seaborn, confluent-kafka, " +
+      "hops-petastorm, opencv-python, tfx, tensorflow-model-analysis, pytorch, torchvision";
 
   public synchronized Set<String> getProvidedPythonLibraryNames() {
     checkCache();
@@ -3185,14 +3217,15 @@ public class Settings implements Serializable {
   }
 
   // Libraries we preinstalled users should not mess with
-  private Set<String> PREINSTALLED_PYTHON_LIBRARY_NAMES;
-  private static final String VARIABLE_PREINSTALLED_PYTHON_LIBRARY_NAMES = "preinstalled_python_lib_names";
-  private static final String DEFAULT_PREINSTALLED_PYTHON_LIBRARY_NAMES =
-      "tensorflow-gpu, tensorflow, pydoop, pyspark, tensorboard";
+  private Set<String> UNMUTABLE_PYTHON_LIBRARY_NAMES;
+  private static final String VARIABLE_UNMUTABLE_PYTHON_LIBRARY_NAMES = "preinstalled_python_lib_names";
+  private static final String DEFAULT_UNMUTABLE_PYTHON_LIBRARY_NAMES = 
+      "pydoop, pyspark, tensorboard, jupyterlab, sparkmagic, hdfscontents, pyjks, hops-apache-beam, pyopenssl, "
+      + "tensorflow-gpu";
 
-  public synchronized Set<String> getPreinstalledPythonLibraryNames() {
+  public synchronized Set<String> getUnmutablePythonLibraryNames() {
     checkCache();
-    return PREINSTALLED_PYTHON_LIBRARY_NAMES;
+    return UNMUTABLE_PYTHON_LIBRARY_NAMES;
   }
 
   private String HOPSWORKS_VERSION;
@@ -3795,4 +3828,26 @@ public class Settings implements Serializable {
     }
   }
   //------------------------------ END PROVENANCE --------------------------------------------//
+  
+  //-----------------------------YARN DOCKER-------------------------------------------------//
+  private static String YARN_RUNTIME = "docker";
+  
+  public synchronized String getYarnRuntime(){
+    checkCache();
+    return YARN_RUNTIME;
+  }
+  
+  private static String DOCKER_MOUNTS = 
+      "/srv/hops/hadoop/etc/hadoop,/srv/hops/spark,/srv/hops/apache-livy,/srv/hops/flink";
+  
+  public synchronized String getDockerMounts(){
+    checkCache();
+    String result = "";
+    for(String mountPoint: DOCKER_MOUNTS.split(",")){
+      result = mountPoint + ":" + mountPoint + ":ro,";
+    }
+    return result.substring(0, result.length() - 1);
+  }
+  
+  //-----------------------------END YARN DOCKER-------------------------------------------------//
 }

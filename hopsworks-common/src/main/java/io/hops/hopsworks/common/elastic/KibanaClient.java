@@ -15,6 +15,7 @@
  */
 package io.hops.hopsworks.common.elastic;
 
+import com.google.common.base.Strings;
 import io.hops.hopsworks.common.dao.project.Project;
 import io.hops.hopsworks.common.dao.user.Users;
 import io.hops.hopsworks.common.proxies.client.HttpRetryableAction;
@@ -24,7 +25,6 @@ import io.hops.hopsworks.common.security.BaseHadoopClientsService;
 import io.hops.hopsworks.common.util.Settings;
 import io.hops.hopsworks.exceptions.ElasticException;
 import io.hops.hopsworks.restutils.RESTCodes;
-import org.apache.directory.api.util.Strings;
 import org.apache.hadoop.util.ExponentialBackOff;
 import org.apache.http.HttpHeaders;
 import org.apache.http.client.ClientProtocolException;
@@ -271,7 +271,7 @@ public class KibanaClient {
             int statusCode = httpResponse.getStatusLine().getStatusCode();
             if (statusCode / 100 == 2) {
               String response = EntityUtils.toString(httpResponse.getEntity());
-              return Strings.isEmpty(response) ? new JSONObject() : new JSONObject(response);
+              return Strings.isNullOrEmpty(response) ? new JSONObject() : new JSONObject(response);
             } else if (statusCode / 100 == 4) {
               if(statusCode == 404){
                 throw new NotFoundClientProtocolException(httpResponse.toString());

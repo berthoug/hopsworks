@@ -39,13 +39,11 @@
 
 package io.hops.hopsworks.common.dao.host;
 
-import io.hops.hopsworks.common.dao.python.CondaCommands;
 import io.hops.hopsworks.common.dao.kagent.HostServices;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -129,10 +127,6 @@ public class Hosts implements Serializable {
 
   @Column(name = "conda_enabled")
   private Boolean condaEnabled;
-
-  @OneToMany(cascade = CascadeType.ALL,
-          mappedBy = "hostId")
-  private Collection<CondaCommands> condaCommands;
 
   @OneToMany(mappedBy = "host")
   private Collection<HostServices> hostServices;
@@ -234,16 +228,6 @@ public class Hosts implements Serializable {
   
   public void setCondaEnabled(Boolean condaEnabled) {
     this.condaEnabled = condaEnabled;
-  }
-  
-  @JsonIgnore
-  @XmlTransient
-  public Collection<CondaCommands> getCondaCommands() {
-    return condaCommands;
-  }
-  
-  public void setCondaCommands(Collection<CondaCommands> condaCommands) {
-    this.condaCommands = condaCommands;
   }
   
   @JsonIgnore

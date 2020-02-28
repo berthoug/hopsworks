@@ -60,6 +60,21 @@ public class SparkConfigurationUtil extends ConfigurationUtil {
           "true"));
     }
 
+    sparkProps.put(Settings.SPARK_YARN_APPMASTER_CONTAINER_RUNTIME, new ConfigProperty(
+        Settings.SPARK_YARN_APPMASTER_CONTAINER_RUNTIME, HopsUtils.OVERWRITE, settings.getYarnRuntime()));
+    sparkProps.put(Settings.SPARK_YARN_APPMASTER_DOCKER_IMAGE, new ConfigProperty(
+        Settings.SPARK_YARN_APPMASTER_DOCKER_IMAGE, HopsUtils.OVERWRITE, ProjectUtils.getDockerImageName(project)));
+    sparkProps.put(Settings.SPARK_YARN_APPMASTER_DOCKER_MOUNTS, new ConfigProperty(
+        Settings.SPARK_YARN_APPMASTER_DOCKER_MOUNTS, HopsUtils.OVERWRITE, settings.getDockerMounts()));
+
+    sparkProps.put(Settings.SPARK_EXECUTOR_CONTAINER_RUNTIME, new ConfigProperty(
+        Settings.SPARK_EXECUTOR_CONTAINER_RUNTIME, HopsUtils.OVERWRITE, settings.getYarnRuntime()));
+    sparkProps.put(Settings.SPARK_EXECUTOR_DOCKER_IMAGE, new ConfigProperty(
+        Settings.SPARK_EXECUTOR_DOCKER_IMAGE, HopsUtils.OVERWRITE, ProjectUtils.getDockerImageName(project)));
+    sparkProps.put(Settings.SPARK_EXECUTOR_DOCKER_MOUNTS, new ConfigProperty(
+        Settings.SPARK_EXECUTOR_DOCKER_MOUNTS, HopsUtils.OVERWRITE, settings.getDockerMounts()));
+
+    
     addToSparkEnvironment(sparkProps, "PATH", "{{PWD}}" + File.pathSeparator +
         settings.getAnacondaProjectDir(project) + "/bin:" + settings.getHadoopSymbolicLinkDir() + "/bin" +
         ":/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin", HopsUtils.APPEND_PATH);
@@ -71,18 +86,18 @@ public class SparkConfigurationUtil extends ConfigurationUtil {
 
     //https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html
     //Needs to be set for CUDA libraries to not initialize GPU context
-    sparkProps.put(Settings.SPARK_YARN_APPMASTER_ENV + "CUDA_VISIBLE_DEVICES",
-            new ConfigProperty(Settings.SPARK_YARN_APPMASTER_ENV + "CUDA_VISIBLE_DEVICES",
+    sparkProps.put(Settings.SPARK_YARN_APPMASTER_CUDA_DEVICES,
+            new ConfigProperty(Settings.SPARK_YARN_APPMASTER_CUDA_DEVICES,
                     HopsUtils.IGNORE, ""));
 
     //https://rocm-documentation.readthedocs.io/en/latest/Other_Solutions/Other-Solutions.html
     //Needs to be set for ROCm libraries to not initialize GPU context
-    sparkProps.put(Settings.SPARK_YARN_APPMASTER_ENV + "HIP_VISIBLE_DEVICES",
-            new ConfigProperty(Settings.SPARK_YARN_APPMASTER_ENV + "HIP_VISIBLE_DEVICES",
+    sparkProps.put(Settings.SPARK_YARN_APPMASTER_HIP_DEVICES,
+            new ConfigProperty(Settings.SPARK_YARN_APPMASTER_HIP_DEVICES,
                     HopsUtils.IGNORE, "-1"));
 
-    sparkProps.put(Settings.SPARK_YARN_APPMASTER_ENV + "EXECUTOR_GPUS",
-        new ConfigProperty(Settings.SPARK_YARN_APPMASTER_ENV + "EXECUTOR_GPUS",
+    sparkProps.put(Settings.SPARK_YARN_APPMASTER_ENV_EXECUTOR_GPUS,
+        new ConfigProperty(Settings.SPARK_YARN_APPMASTER_ENV_EXECUTOR_GPUS,
             HopsUtils.IGNORE, "0"));
 
     sparkProps.put(Settings.SPARK_EXECUTOR_ENV + "EXECUTOR_GPUS",
@@ -341,8 +356,6 @@ public class SparkConfigurationUtil extends ConfigurationUtil {
     extraClassPath
       .append("{{PWD}}")
       .append(File.pathSeparator)
-      .append(settings.getHopsLeaderElectionJarPath())
-      .append(File.pathSeparator)
       .append(settings.getSparkDir())
       .append("/jars/*")
       .append(File.pathSeparator)
@@ -525,10 +538,10 @@ public class SparkConfigurationUtil extends ConfigurationUtil {
         settings.getHadoopSymbolicLinkDir() +"/etc/hadoop/log4j.properties -Dhadoop.root.logger=ERROR,RFA";
     Map<String, String> userProperties = HopsUtils.parseUserProperties(userSparkProperties);
 
-    if(userProperties.containsKey(Settings.SPARK_YARN_APPMASTER_ENV + "LIBHDFS_OPTS")) {
+    if(userProperties.containsKey(Settings.SPARK_YARN_APPMASTER_LIBHDFS_OPTS)) {
       //if user supplied xmx then append what they provided
-      sparkProps.put(Settings.SPARK_YARN_APPMASTER_ENV + "LIBHDFS_OPTS",
-          new ConfigProperty(Settings.SPARK_YARN_APPMASTER_ENV + "LIBHDFS_OPTS",
+      sparkProps.put(Settings.SPARK_YARN_APPMASTER_LIBHDFS_OPTS,
+          new ConfigProperty(Settings.SPARK_YARN_APPMASTER_LIBHDFS_OPTS,
               HopsUtils.APPEND_SPACE, defaultLibHdfsOpts));
     } else {
       addDefaultXmx(sparkProps, Settings.SPARK_YARN_APPMASTER_ENV, (int)(sparkJobConfiguration.getAmMemory()*0.2),

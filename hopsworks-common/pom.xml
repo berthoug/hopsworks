@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Changes to this file committed after and not including commit-id: ccc0d2c5f9a5ac661e60e6eaf138de7889928b8b
-  ~ are released under the following license:
-  ~
-  ~ This file is part of Hopsworks
-  ~ Copyright (C) 2018, Logical Clocks AB. All rights reserved
-  ~
-  ~ Hopsworks is free software: you can redistribute it and/or modify it under the terms of
-  ~ the GNU Affero General Public License as published by the Free Software Foundation,
-  ~ either version 3 of the License, or (at your option) any later version.
-  ~
-  ~ Hopsworks is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
-  ~ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-  ~ PURPOSE.  See the GNU Affero General Public License for more details.
-  ~
-  ~ You should have received a copy of the GNU Affero General Public License along with this program.
-  ~ If not, see <https://www.gnu.org/licenses/>.
-  ~
-  ~ Changes to this file committed before and including commit-id: ccc0d2c5f9a5ac661e60e6eaf138de7889928b8b
-  ~ are released under the following license:
-  ~
-  ~ Copyright (C) 2013 - 2018, Logical Clocks AB and RISE SICS AB. All rights reserved
-  ~
-  ~ Permission is hereby granted, free of charge, to any person obtaining a copy of this
-  ~ software and associated documentation files (the "Software"), to deal in the Software
-  ~ without restriction, including without limitation the rights to use, copy, modify, merge,
-  ~ publish, distribute, sublicense, and/or sell copies of the Software, and to permit
-  ~ persons to whom the Software is furnished to do so, subject to the following conditions:
-  ~
-  ~ The above copyright notice and this permission notice shall be included in all copies or
-  ~ substantial portions of the Software.
-  ~
-  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS  OR IMPLIED, INCLUDING
-  ~ BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-  ~ NONINFRINGEMENT. IN NO EVENT SHALL  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-  ~ DAMAGES OR  OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  ~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-  -->
+~ Changes to this file committed after and not including commit-id: ccc0d2c5f9a5ac661e60e6eaf138de7889928b8b
+~ are released under the following license:
+~
+~ This file is part of Hopsworks
+~ Copyright (C) 2018, Logical Clocks AB. All rights reserved
+~
+~ Hopsworks is free software: you can redistribute it and/or modify it under the terms of
+~ the GNU Affero General Public License as published by the Free Software Foundation,
+~ either version 3 of the License, or (at your option) any later version.
+~
+~ Hopsworks is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
+~ without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+~ PURPOSE.  See the GNU Affero General Public License for more details.
+~
+~ You should have received a copy of the GNU Affero General Public License along with this program.
+~ If not, see <https://www.gnu.org/licenses/>.
+~
+~ Changes to this file committed before and including commit-id: ccc0d2c5f9a5ac661e60e6eaf138de7889928b8b
+~ are released under the following license:
+~
+~ Copyright (C) 2013 - 2018, Logical Clocks AB and RISE SICS AB. All rights reserved
+~
+~ Permission is hereby granted, free of charge, to any person obtaining a copy of this
+~ software and associated documentation files (the "Software"), to deal in the Software
+~ without restriction, including without limitation the rights to use, copy, modify, merge,
+~ publish, distribute, sublicense, and/or sell copies of the Software, and to permit
+~ persons to whom the Software is furnished to do so, subject to the following conditions:
+~
+~ The above copyright notice and this permission notice shall be included in all copies or
+~ substantial portions of the Software.
+~
+~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS  OR IMPLIED, INCLUDING
+~ BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+~ NONINFRINGEMENT. IN NO EVENT SHALL  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+~ DAMAGES OR  OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+~ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+-->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -124,10 +124,20 @@
       <version>1.1</version>
     </dependency>
     <dependency>
-      <groupId>io.hops</groupId>
-      <artifactId>hadoop-client</artifactId>
+      <groupId>org.apache.htrace</groupId>
+      <artifactId>htrace-core4</artifactId>
+      <version>4.1.0-incubating</version>
+    </dependency>
+    <dependency>
+      <groupId>io.hops.metadata</groupId>
+      <artifactId>hops-metadata-dal</artifactId>
       <version>${hops.version}</version>
-      <exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.hops</groupId>
+      <artifactId>hadoop-client-runtime</artifactId>
+      <version>${hops.version}</version>
+      <!--      <exclusions>
         <exclusion>
           <groupId>com.sun.jersey</groupId>
           <artifactId>jersey-core</artifactId>
@@ -136,7 +146,7 @@
           <groupId>io.netty</groupId>
           <artifactId>netty-all</artifactId>
         </exclusion>
-      </exclusions>
+      </exclusions>-->
     </dependency>
     <dependency>
       <groupId>org.apache.kafka</groupId>
@@ -188,19 +198,19 @@
     </dependency>
     <!--Elastic dependency-->
     <dependency>
-        <groupId>org.elasticsearch.client</groupId>
-        <artifactId>elasticsearch-rest-high-level-client</artifactId>
-        <version>7.2.0</version>
+      <groupId>org.elasticsearch.client</groupId>
+      <artifactId>elasticsearch-rest-high-level-client</artifactId>
+      <version>7.2.0</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-api</artifactId>
-        <version>2.6.2</version>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.6.2</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.logging.log4j</groupId>
-        <artifactId>log4j-core</artifactId>
-        <version>2.6.2</version>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.6.2</version>
 
     </dependency>
     <dependency>
@@ -245,6 +255,36 @@
       <version>1.60</version>
     </dependency>
     <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>org.eclipse.persistence.core</artifactId>
+      <version>2.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>org.eclipse.persistence.asm</artifactId>
+      <version>2.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>org.eclipse.persistence.antlr</artifactId>
+      <version>2.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>org.eclipse.persistence.jpa</artifactId>
+      <version>2.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>org.eclipse.persistence.jpa.jpql</artifactId>
+      <version>2.5.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.persistence</groupId>
+      <artifactId>javax.persistence</artifactId>
+      <version>2.1.0</version>
+    </dependency>
+    <dependency>
       <groupId>javax</groupId>
       <artifactId>javaee-api</artifactId>
       <version>7.0</version>
@@ -258,26 +298,31 @@
 
     <dependency>
       <groupId>io.hops</groupId>
-      <artifactId>hadoop-common</artifactId>
+      <artifactId>hadoop-client-api</artifactId>
       <version>${hops.version}</version>
-      <exclusions>
-        <exclusion>
-          <groupId>com.nimbusds</groupId>
-          <artifactId>nimbus-jose-jwt</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.bouncycastle</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>com.sun.jersey</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>*</artifactId>
-        </exclusion>
-      </exclusions>
+      <!--      <exclusions>
+          <exclusion>
+              <groupId>com.nimbusds</groupId>
+              <artifactId>nimbus-jose-jwt</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>org.bouncycastle</groupId>
+              <artifactId>*</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>com.sun.jersey</groupId>
+              <artifactId>*</artifactId>
+          </exclusion>
+          <exclusion>
+              <groupId>javax.servlet</groupId>
+              <artifactId>*</artifactId>
+          </exclusion>
+      </exclusions>-->
+    </dependency>
+    <dependency>
+      <groupId>com.jcraft</groupId>
+      <artifactId>jsch</artifactId>
+      <version>0.1.54</version>
     </dependency>
 
     <!-- Hops Hive dependecies -->
@@ -302,7 +347,7 @@
         </exclusion>
         <exclusion>
           <groupId>com.sun.jersey</groupId>
-          <artifactId>jersey-core</artifactId>
+          <artifactId>*</artifactId>
         </exclusion>
         <exclusion>
           <groupId>javax.servlet</groupId>
@@ -394,7 +439,44 @@
       <version>1.10.19</version>
       <scope>test</scope>
     </dependency>
-
+    <!-- jersey dependencies -->
+    <!--    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-server</artifactId>
+      <version>2.21</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-multipart</artifactId>
+      <version>2.21</version>
+    </dependency>-->
+    <dependency>
+      <groupId>org.glassfish.jersey.connectors</groupId>
+      <artifactId>jersey-apache-connector</artifactId>
+      <version>2.21</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.glassfish.jersey.core</groupId>
+          <artifactId>jersey-common</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- end of jersey dependencies -->
+    <dependency>
+      <groupId>com.github.docker-java</groupId>
+      <artifactId>docker-java</artifactId>
+      <version>3.2.0-rc5</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.glassfish.jersey.connectors</groupId>
+          <artifactId>jersey-apache-connector</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.glassfish.jersey.inject</groupId>
+          <artifactId>jersey-hk2</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
   </dependencies>
 
   <build>

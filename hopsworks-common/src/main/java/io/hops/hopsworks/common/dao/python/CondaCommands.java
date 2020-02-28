@@ -39,7 +39,6 @@
 
 package io.hops.hopsworks.common.dao.python;
 
-import io.hops.hopsworks.common.dao.host.Hosts;
 import io.hops.hopsworks.common.dao.project.Project;
 import io.hops.hopsworks.common.dao.user.Users;
 
@@ -111,13 +110,7 @@ import javax.xml.bind.annotation.XmlRootElement;
           = "SELECT c FROM CondaCommands c WHERE c.created = :created"),
   @NamedQuery(name = "CondaCommands.deleteAllFailedCommands",
           query
-          = "DELETE FROM CondaCommands c WHERE c.status = :status"),
-  @NamedQuery(name = "CondaCommands.findByHost",
-          query = "SELECT c FROM CondaCommands c WHERE c.hostId = :host"),
-  @NamedQuery(name = "CondaCommands.findNotFinishedByHost",
-          query = "SELECT c FROM CondaCommands c WHERE c.hostId = :host AND c.status != "
-            + "io.hops.hopsworks.common.dao.python.CondaCommandFacade.CondaStatus.SUCCESS "
-            + "AND c.status != io.hops.hopsworks.common.dao.python.CondaCommandFacade.CondaStatus.FAILED")})
+          = "DELETE FROM CondaCommands c WHERE c.status = :status")})
 public class CondaCommands implements Serializable {
 
   private static final long serialVersionUID = 1L;
@@ -190,10 +183,6 @@ public class CondaCommands implements Serializable {
           referencedColumnName = "id")
   @ManyToOne(optional = false)
   private Project projectId;
-  @JoinColumn(name = "host_id",
-          referencedColumnName = "id")
-  @ManyToOne(optional = false)
-  private Hosts hostId;
   @Size(min = 1,
           max = 10000)
   @Column(name = "environment_yml")
@@ -205,12 +194,11 @@ public class CondaCommands implements Serializable {
   public CondaCommands() {
   }
 
-  public CondaCommands(Hosts h, String user, Users userId, CondaCommandFacade.CondaOp op,
+  public CondaCommands(String user, Users userId, CondaCommandFacade.CondaOp op,
                        CondaCommandFacade.CondaStatus status, CondaCommandFacade.CondaInstallType installType,
                        LibraryFacade.MachineType machineType, Project project, String lib, String version,
                        String channelUrl, Date created, String arg, String environmentYml, Boolean installJupyter,
                        String environmentName) {
-    this.hostId = h;
     if (op  == null || user == null || project == null) { 
       throw new NullPointerException("Op/user/project cannot be null");
     }
@@ -302,14 +290,6 @@ public class CondaCommands implements Serializable {
 
   public void setProjectId(Project projectId) {
     this.projectId = projectId;
-  }
-
-  public Hosts getHostId() {
-    return hostId;
-  }
-
-  public void setHostId(Hosts hostId) {
-    this.hostId = hostId;
   }
 
   public CondaCommandFacade.CondaOp getOp() {

@@ -148,7 +148,7 @@ public class EnvironmentResource {
   public Response post(@PathParam("version") String version,
       @QueryParam("action") EnvironmentDTO.Operation action,
       @Context UriInfo uriInfo,
-      @Context SecurityContext sc) throws PythonException, ServiceException, ProjectException {
+      @Context SecurityContext sc) throws PythonException, ServiceException, ProjectException, InterruptedException {
     EnvironmentDTO dto;
     Users user = jWTHelper.getUserPrincipal(sc);
     switch ((action != null) ? action : EnvironmentDTO.Operation.CREATE) {
@@ -157,7 +157,7 @@ public class EnvironmentResource {
         dto = buildEnvDTO(uriInfo, null, version);
         return Response.ok().entity(dto).build();
       case CREATE:
-        environmentController.createEnv(project, user, version);
+        environmentController.createEnv(project, user, version, false);
         dto = buildEnvDTO(uriInfo,null, version);
         return Response.created(dto.getHref()).entity(dto).build();
       default:
@@ -166,23 +166,23 @@ public class EnvironmentResource {
     }
   }
 
-  @ApiOperation(value = "Create an environment from yaml file", response = EnvironmentDTO.class)
-  @POST
-  @Produces(MediaType.APPLICATION_JSON)
-  @AllowedProjectRoles({AllowedProjectRoles.DATA_SCIENTIST, AllowedProjectRoles.DATA_OWNER})
-  @JWTRequired(acceptedTokens = {Audience.API}, allowedUserRoles = {"HOPS_ADMIN", "HOPS_USER"})
-  public Response postYml(EnvironmentYmlDTO environmentYmlDTO, @Context UriInfo uriInfo, @Context SecurityContext sc)
-      throws PythonException, ServiceException, DatasetException,
-      ProjectException, UnsupportedEncodingException, ElasticException {
-    Users user = jWTHelper.getUserPrincipal(sc);
-    String allYmlPath = getYmlPath(environmentYmlDTO.getAllYmlPath());
-    String cpuYmlPath = getYmlPath(environmentYmlDTO.getCpuYmlPath());
-    String gpuYmlPath = getYmlPath(environmentYmlDTO.getGpuYmlPath());
-    String version = environmentController.createEnvironmentFromYml(allYmlPath, cpuYmlPath, gpuYmlPath,
-      environmentYmlDTO.getInstallJupyter(), user, project);
-    EnvironmentDTO dto = buildEnvDTO(uriInfo, null, version);
-    return Response.created(dto.getHref()).entity(dto).build();
-  }
+//  @ApiOperation(value = "Create an environment from yaml file", response = EnvironmentDTO.class)
+//  @POST
+//  @Produces(MediaType.APPLICATION_JSON)
+//  @AllowedProjectRoles({AllowedProjectRoles.DATA_SCIENTIST, AllowedProjectRoles.DATA_OWNER})
+//  @JWTRequired(acceptedTokens = {Audience.API}, allowedUserRoles = {"HOPS_ADMIN", "HOPS_USER"})
+//  public Response postYml(EnvironmentYmlDTO environmentYmlDTO, @Context UriInfo uriInfo, @Context SecurityContext sc)
+//      throws PythonException, ServiceException, DatasetException,
+//      ProjectException, UnsupportedEncodingException, ElasticException {
+//    Users user = jWTHelper.getUserPrincipal(sc);
+//    String allYmlPath = getYmlPath(environmentYmlDTO.getAllYmlPath());
+//    String cpuYmlPath = getYmlPath(environmentYmlDTO.getCpuYmlPath());
+//    String gpuYmlPath = getYmlPath(environmentYmlDTO.getGpuYmlPath());
+//    String version = environmentController.createEnvironmentFromYml(allYmlPath, cpuYmlPath, gpuYmlPath,
+//      environmentYmlDTO.getInstallJupyter(), user, project);
+//    EnvironmentDTO dto = buildEnvDTO(uriInfo, null, version);
+//    return Response.created(dto.getHref()).entity(dto).build();
+//  }
 
   @ApiOperation(value = "Remove the python environment with the specified version" + " for this project",
       response = EnvironmentDTO.class)

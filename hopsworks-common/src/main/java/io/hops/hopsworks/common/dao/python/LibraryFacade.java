@@ -19,6 +19,7 @@ import io.hops.hopsworks.common.dao.AbstractFacade;
 import io.hops.hopsworks.common.dao.project.Project;
 import io.hops.hopsworks.exceptions.ServiceException;
 import io.hops.hopsworks.restutils.RESTCodes;
+import java.util.Collection;
 
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -72,9 +73,21 @@ public class LibraryFacade extends AbstractFacade<PythonDep> {
     return repo;
   }
 
+  public PythonDep getOrCreateDep(PythonDep dep) {
+    return getOrCreateDep(dep.getRepoUrl(), dep.getMachineType(), dep.getInstallType(), dep.getDependency(), dep.
+        getVersion(), true, dep.isPreinstalled(), dep.getBaseEnv());
+  }
+  
   public PythonDep getOrCreateDep(AnacondaRepo repo, MachineType machineType,
                                   CondaCommandFacade.CondaInstallType installType,
-                                  String dependency, String version, boolean create, boolean preinstalled) {
+                                  String dependency, String version, boolean persist, boolean preinstalled) {
+    return getOrCreateDep(repo, machineType, installType, dependency, version, persist, preinstalled, null);
+  }
+  
+  public PythonDep getOrCreateDep(AnacondaRepo repo, MachineType machineType,
+                                  CondaCommandFacade.CondaInstallType installType,
+                                  String dependency, String version, boolean persist, boolean preinstalled,
+                                  String baseEnv) {
     TypedQuery<PythonDep> deps = em.createNamedQuery("PythonDep.findUniqueDependency", PythonDep.class);
     deps.setParameter("dependency", dependency);
     deps.setParameter("version", version);
@@ -85,19 +98,27 @@ public class LibraryFacade extends AbstractFacade<PythonDep> {
     try {
       dep = deps.getSingleResult();
     } catch (NoResultException ex) {
-      if (create) {
-        dep = new PythonDep();
-        dep.setRepoUrl(repo);
-        dep.setDependency(dependency);
-        dep.setVersion(version);
-        dep.setPreinstalled(preinstalled);
-        dep.setInstallType(installType);
-        dep.setMachineType(machineType);
+      dep = new PythonDep();
+      dep.setRepoUrl(repo);
+      dep.setDependency(dependency);
+      dep.setVersion(version);
+      dep.setPreinstalled(preinstalled);
+      dep.setInstallType(installType);
+      dep.setMachineType(machineType);
+      dep.setBaseEnv(baseEnv);
+      if (persist) {
         em.persist(dep);
         em.flush();
       }
     }
     return dep;
+  }
+  
+  public Collection<PythonDep> getBaseEnvDeps(String baseEnvName){
+    TypedQuery<PythonDep> deps = em.createNamedQuery("PythonDep.findBaseEnv", PythonDep.class);
+    deps.setParameter("baseEnv", baseEnvName);
+    Collection<PythonDep> res;
+    return deps.getResultList();
   }
   
   public PythonDep findByDependencyAndProject(String dependency, Project project) {

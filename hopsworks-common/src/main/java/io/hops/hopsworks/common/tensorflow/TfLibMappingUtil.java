@@ -31,8 +31,6 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 import java.io.File;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This code is here as it should be used both for PySpark apps running TensorFlow in both Jupyter and Jobs to set the
@@ -111,33 +109,34 @@ public class TfLibMappingUtil {
               .orElse(null);
     } else if(command.getOp().compareTo(CondaCommandFacade.CondaOp.CREATE) == 0) {
       return tfLibMappingFacade.findByTfVersion(settings.getTensorflowVersion());
-    } else if(command.getOp().compareTo(CondaCommandFacade.CondaOp.YML) == 0) {
-      String envYml = command.getEnvironmentYml();
-
-      Pattern tfCPUPattern = Pattern.compile("(tensorflow==\\d*.\\d*.\\d*)");
-      Matcher tfCPUMatcher = tfCPUPattern.matcher(envYml);
-
-      if(tfCPUMatcher.find()) {
-        String [] libVersionPair = tfCPUMatcher.group(0).split("==");
-        return tfLibMappingFacade.findByTfVersion(libVersionPair[1]);
-      }
-
-      Pattern tfGPUPattern = Pattern.compile("(tensorflow-gpu==\\d*.\\d*.\\d*)");
-      Matcher tfGPUMatcher = tfGPUPattern.matcher(envYml);
-
-      if(tfGPUMatcher.find()) {
-        String [] libVersionPair = tfGPUMatcher.group(0).split("==");
-        return tfLibMappingFacade.findByTfVersion(libVersionPair[1]);
-      }
-
-      Pattern tfRocmPattern = Pattern.compile("(tensorflow-rocm==\\d*.\\d*.\\d*)");
-      Matcher tfRocmMatcher = tfRocmPattern.matcher(envYml);
-
-      if(tfRocmMatcher.find()) {
-        String [] libVersionPair = tfGPUMatcher.group(0).split("==");
-        return tfLibMappingFacade.findByTfVersion(libVersionPair[1]);
-      }
     }
+//    else if(command.getOp().compareTo(CondaCommandFacade.CondaOp.YML) == 0) {
+//      String envYml = command.getEnvironmentYml();
+//
+//      Pattern tfCPUPattern = Pattern.compile("(tensorflow==\\d*.\\d*.\\d*)");
+//      Matcher tfCPUMatcher = tfCPUPattern.matcher(envYml);
+//
+//      if(tfCPUMatcher.find()) {
+//        String [] libVersionPair = tfCPUMatcher.group(0).split("==");
+//        return tfLibMappingFacade.findByTfVersion(libVersionPair[1]);
+//      }
+//
+//      Pattern tfGPUPattern = Pattern.compile("(tensorflow-gpu==\\d*.\\d*.\\d*)");
+//      Matcher tfGPUMatcher = tfGPUPattern.matcher(envYml);
+//
+//      if(tfGPUMatcher.find()) {
+//        String [] libVersionPair = tfGPUMatcher.group(0).split("==");
+//        return tfLibMappingFacade.findByTfVersion(libVersionPair[1]);
+//      }
+//
+//      Pattern tfRocmPattern = Pattern.compile("(tensorflow-rocm==\\d*.\\d*.\\d*)");
+//      Matcher tfRocmMatcher = tfRocmPattern.matcher(envYml);
+//
+//      if(tfRocmMatcher.find()) {
+//        String [] libVersionPair = tfGPUMatcher.group(0).split("==");
+//        return tfLibMappingFacade.findByTfVersion(libVersionPair[1]);
+//      }
+//    }
     return null;
   }
 }

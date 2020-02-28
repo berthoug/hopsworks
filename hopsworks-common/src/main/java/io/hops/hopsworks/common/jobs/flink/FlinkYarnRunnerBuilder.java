@@ -47,6 +47,7 @@ import io.hops.hopsworks.common.jobs.AsynchronousJobExecutor;
 import io.hops.hopsworks.common.jobs.configuration.JobType;
 import io.hops.hopsworks.common.jobs.yarn.YarnRunner;
 import io.hops.hopsworks.common.util.FlinkConfigurationUtil;
+import io.hops.hopsworks.common.util.ProjectUtils;
 import io.hops.hopsworks.common.util.Settings;
 import org.apache.flink.client.deployment.ClusterSpecification;
 import org.apache.flink.yarn.YarnClusterDescriptor;
@@ -159,6 +160,7 @@ public class FlinkYarnRunnerBuilder {
     // Add HopsUtil
 //    cluster.addHopsLocalResources("hops-util.jar", settings.getHopsUtilHdfsPath());
   
+    cluster.setDocker(ProjectUtils.getDockerImageName(project),settings.getDockerMounts());
     builder.setYarnClient(yarnClient);
     builder.setDfsClient(dfsClient);
     builder.setFlinkCluster(cluster);
