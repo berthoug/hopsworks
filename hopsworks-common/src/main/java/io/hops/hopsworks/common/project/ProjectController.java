@@ -141,6 +141,7 @@ import io.hops.hopsworks.exceptions.TensorBoardException;
 import io.hops.hopsworks.exceptions.UserException;
 import io.hops.hopsworks.restutils.RESTCodes;
 import io.hops.hopsworks.restutils.RESTException;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.Path;
@@ -2592,8 +2593,8 @@ public class ProjectController {
     certificateMaterializer.materializeCertificatesLocal(user.getUsername(), project.getName());
     CertificateMaterializer.CryptoMaterial material = certificateMaterializer.getUserMaterial(user.getUsername(),
       project.getName());
-    String keyStore = org.apache.commons.net.util.Base64.encodeBase64String(material.getKeyStore().array());
-    String trustStore = org.apache.commons.net.util.Base64.encodeBase64String(material.getTrustStore().array());
+    String keyStore = Base64.encodeBase64String(material.getKeyStore().array());
+    String trustStore = Base64.encodeBase64String(material.getTrustStore().array());
     String certPwd = new String(material.getPassword());
     return new AccessCredentialsDTO("jks", keyStore, trustStore, certPwd);
   }
